@@ -21,13 +21,31 @@ concert, professional sports, and college sports events.
 
 ## Key Queries
 1. Energy efficiency per attendee by event type
-2. Most efficient venues per attendee
-3. LEED certification impact on energy consumption
-4. Year over year efficiency trend by venue
+2. Most efficient venues per attendee 
+3. LEED certification impact on energy consumption 
+4. Year over year efficiency trend by venue 
 5. Composite sustainability score and final ranking
 
 ## Key Findings
+<img width="367" height="137" alt="image" src="https://github.com/user-attachments/assets/e2c633c7-45d6-4d98-bab1-78ebfbc913cd" />
 
+-Query indicates that in South Carolina pro sports produce the most kWh per attendee on average where as college sports produce the least. This is likely due to college sports having the highest attendace percentages.
+
+<img width="455" height="237" alt="image" src="https://github.com/user-attachments/assets/9c39f519-0018-4864-8b34-391ddf676a30" />
+
+-Query shows that North Charelston Colesium has the highest kwh per attendee, where as Segra park is the most energy efficent.
+
+<img width="403" height="113" alt="image" src="https://github.com/user-attachments/assets/c069f40e-831f-45ec-8ca2-5fdaa5a46d22" />
+
+-LEED Certification does appear to have an impact on kWh
+
+<img width="581" height="602" alt="image" src="https://github.com/user-attachments/assets/d2e686b3-79ff-4701-986a-c1ba04034267" />
+
+-Shows emmisions getting worse overtime for most venues, however as there was often only one 2025 event for most venues, singularly low attendance could screw this result
+
+<img width="720" height="251" alt="image" src="https://github.com/user-attachments/assets/a8042e65-98f2-454f-a758-9617eae72803" />
+
+-Segra park has the best energy efficency. This makes sense because it is both outdoor and LEED certified
 
 ## What I Would Add With More Time
 - Waste management table
