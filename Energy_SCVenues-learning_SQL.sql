@@ -1,10 +1,14 @@
 -- SC Venue Sustainability Project
 -- Schema
+--clear tables
+DROP TABLE IF EXISTS energy_usage;
+DROP TABLE IF EXISTS Events;
+DROP TABLE IF EXISTS Venues;
 -- turn on linking ability
 PRAGMA foreign_keys = ON;
 
 --Create Tables
-CREATE TABLE Venues ( Venu_id char(3) PRIMARY KEY, Venue_name varchar(30) NOT NULL, city varchar(30), yrbuilt int(4), LEED bool, Roof bool, capacity int(5),recent_reno int(4));  
+CREATE TABLE Venues ( Venue_id char(3) PRIMARY KEY, Venue_name varchar(30) NOT NULL, city varchar(30), yrbuilt int(4), LEED bool, Roof bool, capacity int(5),recent_reno int(4));  
 CREATE TABLE Events (Event_id INTEGER PRIMARY KEY AUTOINCREMENT, Venue_id char(3),event_name varchar(30), event_type text CHECK (event_type IN ('concert', 'pro_sports', 'college_sports')), month int(2), event_year int(4), attendance int(5),FOREIGN KEY (venue_id) REFERENCES venues(venue_id));
 CREATE TABLE energy_usage (energy_id INTEGER PRIMARY KEY AUTOINCREMENT,event_id INTEGER NOT NULL UNIQUE,kwh_used REAL, renewable_pct REAL NOT NULL CHECK (renewable_pct BETWEEN 0 AND 100),solar_contribution_kwh REAL NOT NULL DEFAULT 0,FOREIGN KEY (event_id) REFERENCES events(event_id));
 
@@ -115,21 +119,21 @@ JOIN Events e ON eu.event_id = e.Event_id
 GROUP BY e.event_type;
 
 --Question2: What is the energy/attendee by venue?
-Select Venues.venue_name,
+SELECT Venues.venue_name,
 	ROUND(SUM(energy_usage.kwh_used) / SUM(Events.attendance), 4) AS avg_kwh_per_attendee
 FROM Events
-INNER Join Venues On Venues.venu_id=Events.Venue_id
+INNER Join Venues On Venues.venue_id=Events.Venue_id
 Inner JOIN energy_usage ON energy_usage.event_id=Events.Event_id
 GROUP By Venue_name 
-ORDER BY avg_kwh_per_attendee DESC
+ORDER BY avg_kwh_per_attendee DESC;
 
 --Does leed certification actually matter?
 SELECT CASE WHEN Venues.LEED = 1 THEN 'Certified' ELSE 'Not Certified' END AS leed_status, 
-       COUNT(DISTINCT Venues.Venu_id) AS number_of_venues,
+       COUNT(DISTINCT Venues.Venue_id) AS number_of_venues,
        ROUND(AVG(energy_usage.kwh_used), 2) AS avg_kwh
 FROM energy_usage
 INNER JOIN Events ON energy_usage.event_id = Events.Event_id
-INNER JOIN Venues ON Events.Venue_id=Venues.Venu_id
+INNER JOIN Venues ON Events.Venue_id=Venues.Venue_id
 GROUP BY Venues.LEED 
 ORDER BY avg_kwh DESC;
 
@@ -138,19 +142,23 @@ WITH yearlyCTE AS (
   Select Venues.venue_name, Events.event_year,
       ROUND(SUM(energy_usage.kwh_used) / SUM(Events.attendance), 4) AS avg_kwh_per_attendee
   FROM Events
-  INNER Join Venues On Venues.venu_id=Events.Venue_id
+  INNER Join Venues On Venues.venue_id=Events.Venue_id
   Inner JOIN energy_usage ON energy_usage.event_id=Events.Event_id
   GROUP By Venue_name, event_year 
 )
-SELECT * FROM yearlyCTE
-OrDER BY venue_name, event_year
+SELECT 
+avg_kwh_per_attendee,
+venue_name,
+event_year
+FROM yearlyCTE
+OrDER BY venue_name, event_year;
 
 --Question5: What is the final ranking
 WITH yearlyCTE AS (
   Select Venues.venue_name,
       ROUND(SUM(energy_usage.kwh_used) / SUM(Events.attendance), 4) AS avg_kwh_per_attendee
   FROM Events
-  INNER Join Venues On Venues.venu_id=Events.Venue_id
+  INNER Join Venues On Venues.venue_id=Events.Venue_id
   Inner JOIN energy_usage ON energy_usage.event_id=Events.Event_id
   GROUP By Venue_name
 ),
@@ -160,7 +168,7 @@ scoringCTE AS(
   ROUND(AVG(energy_usage.renewable_pct), 4) AS avg_renewable_pct
   FROM yearlyCTE
   Inner Join Venues On yearlyCTE.venue_name=Venues.Venue_name
-  INNER JOIN Events ON Events.Venue_id=Venues.Venu_id
+  INNER JOIN Events ON Events.Venue_id=Venues.Venue_id
   Inner JOIN energy_usage ON Events.Event_id=energy_usage.event_id
   GROUP BY yearlyCTE.venue_name
   )
